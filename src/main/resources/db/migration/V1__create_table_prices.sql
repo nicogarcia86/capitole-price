@@ -4,7 +4,8 @@ CREATE TABLE brand (
     name VARCHAR(60)
 );
 --create table PRICES
-CREATE TABLE PRICES (
+CREATE TABLE prices (
+    id INT PRIMARY KEY,
     brand_id INTEGER,
     start_date TIMESTAMP,
     end_date TIMESTAMP,
