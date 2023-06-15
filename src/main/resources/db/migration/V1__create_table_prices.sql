@@ -1,9 +1,9 @@
---create table BRAND
+--create table brand
 CREATE TABLE brand (
     id INT PRIMARY KEY,
     name VARCHAR(60)
 );
---create table PRICES
+--create table prices
 CREATE TABLE prices (
     id INT PRIMARY KEY,
     brand_id INTEGER,
