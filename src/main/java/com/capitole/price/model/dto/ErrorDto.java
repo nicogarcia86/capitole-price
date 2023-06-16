@@ -1,4 +1,4 @@
-package com.capitole.pricing.models.dto;
+package com.capitole.price.model.dto;
 
 import lombok.Builder;
 import lombok.Data;

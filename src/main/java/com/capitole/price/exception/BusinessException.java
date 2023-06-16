@@ -1,4 +1,4 @@
-package com.capitole.pricing.exception;
+package com.capitole.price.exception;
 
 import lombok.Data;
 import org.springframework.http.HttpStatus;
