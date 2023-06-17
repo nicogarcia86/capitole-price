@@ -25,7 +25,7 @@ public class PriceServiceImpl implements PriceService {
         log.info("Searching price list");
         List<PriceEntity> prices = priceRepository.findActivePrices(brandId, productId, currentDate);
         return prices.stream().findFirst().map(p -> {
-            log.info("Prices found: {}. " + (prices.size() > 1 ? "The one with priority {} will be returned" : "")
+            log.info("Prices found: {}. " + (prices.size() > 1 ? "The one with priority {} will be returned" : ""));
             return PriceResponseDto.fromEntity(p);
         }).orElseThrow (() -> {
             log.error("Prices not found, BussinesException will be returned");
