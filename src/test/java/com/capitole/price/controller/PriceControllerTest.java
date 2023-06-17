@@ -12,13 +12,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -30,17 +27,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.hamcrest.Matchers.equalTo;
 
 
-
-@SpringBootTest
 @ExtendWith(MockitoExtension.class)
 public class PriceControllerTest {
-
     @Mock
     private PriceServiceImpl priceService;
-
     @InjectMocks
     private PriceController priceController;
-
     private MockMvc mockMvc;
 
     @BeforeEach
@@ -92,12 +84,10 @@ public class PriceControllerTest {
         String currentString = "2021-06-17T21:00:00";
         LocalDateTime dateTime = LocalDateTime.parse(currentString, formatter);
 
-
         // When
         when(priceService.findActivePrices(brandId, productId, dateTime))
                 .thenThrow(new BusinessException("E200", HttpStatus.NOT_FOUND
                         , String.format("There is not prices for brand %d, product %d and date %s",brandId,productId,currentString)));
-
 
         mockMvc.perform(get("/prices/activePrice")
                         .param("dateTime", currentString)
@@ -111,4 +101,105 @@ public class PriceControllerTest {
         // Then
         verify(priceService).findActivePrices(brandId, productId, dateTime);
     }
+
+    @Test
+    public void testGetEndpoint_MissingParameterBrandId_Returns400AndErrorDto() throws Exception {
+        // Given
+        int productId = 1;
+        String currentString = "2021-06-17T21:00:00";
+
+        // When
+        mockMvc.perform(get("/prices/activePrice")
+                        .param("dateTime", currentString)
+                        .param("productId", String.valueOf(productId))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message", equalTo(String.format("Required request parameter 'brandId' for method parameter type int is not present"))))
+                .andReturn();
+    }
+
+    @Test
+    public void testGetEndpoint_MissingParameterProductId_Returns400AndErrorDto() throws Exception {
+        // Given
+        int brandId = 1;
+        String currentString = "2021-06-17T21:00:00";
+
+
+        // When
+        mockMvc.perform(get("/prices/activePrice")
+                        .param("dateTime", currentString)
+                        .param("brandId", String.valueOf(brandId))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message", equalTo(String.format("Required request parameter 'productId' for method parameter type int is not present"))))
+                .andReturn();
+    }
+
+    @Test
+    public void testGetEndpoint_MissingParameterDateTime_Returns400AndErrorDto() throws Exception {
+        // Given
+        int brandId = 1;
+        int productId = 1;
+
+        // When
+        mockMvc.perform(get("/prices/activePrice")
+                        .param("productId", String.valueOf(productId))
+                        .param("brandId", String.valueOf(brandId))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message", equalTo(String.format("Required request parameter 'dateTime' for method parameter type LocalDateTime is not present"))))
+                .andReturn();
+    }
+
+    @Test
+    public void testGetEndpoint_InvalidBrandIdType_Returns400AndErrorDto() throws Exception {
+        // Given
+        int productId = 1;
+        String currentString = "2021-06-17T21:00:00";
+
+        // When
+        mockMvc.perform(get("/prices/activePrice")
+                        .param("dateTime", currentString)
+                        .param("productId", String.valueOf(productId))
+                        .param("brandId", "brand")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message", equalTo(String.format("For input string: \"brand\""))))
+                .andReturn();
+    }
+
+    @Test
+    public void testGetEndpoint_InvalidProductIdType_Returns400AndErrorDto() throws Exception {
+        // Given
+        int branID = 1;
+        String currentString = "2021-06-17T21:00:00";
+
+        // When
+        mockMvc.perform(get("/prices/activePrice")
+                        .param("dateTime", currentString)
+                        .param("productId", "product")
+                        .param("brandId", String.valueOf(branID))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message", equalTo(String.format("For input string: \"product\""))))
+                .andReturn();
+    }
+
+    @Test
+    public void testGetEndpoint_InvalidDateTimeFormat_Returns400AndErrorDto() throws Exception {
+        // Given
+        int branID = 1;
+        String currentString = "2021-06-17";
+
+        // When
+        mockMvc.perform(get("/prices/activePrice")
+                        .param("dateTime", currentString)
+                        .param("productId", "product")
+                        .param("brandId", String.valueOf(branID))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message", equalTo(String.format("Unable to parse date time value \"2021-06-17\" using configuration from @org.springframework.format.annotation.DateTimeFormat(pattern=\"yyyy-MM-dd'T'HH:mm:ss\", style=\"SS\", iso=NONE, fallbackPatterns={})"))))
+                .andReturn();
+    }
+
 }
