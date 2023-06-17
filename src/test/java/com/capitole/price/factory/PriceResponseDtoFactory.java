@@ -1,7 +1,6 @@
 package com.capitole.price.factory;
 
 import com.capitole.price.model.dto.PriceResponseDto;
-
 import java.time.LocalDateTime;
 
 public class PriceResponseDtoFactory {

@@ -12,7 +12,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 
@@ -31,14 +30,12 @@ class PriceServiceImplTest {
 
     @Mock
     private PriceRepository priceRepository;
-
     @InjectMocks
     private PriceServiceImpl priceService;
 
     @BeforeEach
     void setUp() {
     }
-
 
     @Test
     void findActivePrices_PriceExists_ReturnsPriceResponseDto() {

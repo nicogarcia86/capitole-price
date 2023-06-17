@@ -1,7 +1,6 @@
 package com.capitole.price.factory;
 
 import com.capitole.price.model.entity.PriceEntity;
-
 import java.time.LocalDateTime;
 
 public class PriceEntityFactory {
